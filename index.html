@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Tool Catalog</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>AI Student Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #05070a;
-            --card-bg: rgba(255, 255, 255, 0.06);
-            --primary: #8b5cf6; /* Vivid Violet */
-            --secondary: #06b6d4; /* Cyan */
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
+            --bg-color: #0b0e14;
+            --field-bg: #14181f;
+            --primary: #f5c150; /* The yellow from the images */
+            --primary-dim: rgba(245, 193, 80, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #8a99a8;
+            --border-color: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -24,194 +25,306 @@
         }
 
         body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            color: var(--text);
             overflow: hidden;
         }
 
-        /* Container for mobile responsiveness */
-        .app-container {
+        /* Container for mobile simulation */
+        .app-view {
             width: 100%;
-            padding: 20px;
-            max-width: 450px;
-            perspective: 1000px;
+            max-width: 480px;
+            height: 100%;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            padding: 40px 25px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        /* Large Bold Title */
         h1 {
-            font-size: 24px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #fff, var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 5px;
         }
 
-        .desc {
-            text-align: center;
-            font-size: 14px;
+        .subtitle {
+            font-size: 15px;
             color: var(--text-dim);
             margin-bottom: 30px;
+            font-weight: 400;
         }
 
-        .input-box {
-            position: relative;
+        /* The Sign In / Sign Up tab switcher */
+        .tab-switcher {
+            display: flex;
+            background-color: var(--field-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #1a1a1a;
+        }
+
+        /* Form grouping and two-column fields */
+        .form-row {
+            display: flex;
+            gap: 15px;
             margin-bottom: 20px;
+        }
+
+        .field-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .form-row .field-group {
+            margin-bottom: 0;
+        }
+
+        /* Input field labels */
+        .field-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* General Input styling */
+        .input-wrapper {
+            position: relative;
         }
 
         input {
             width: 100%;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            padding: 16px 16px 16px 50px; /* Space for icon */
+            background-color: var(--field-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             color: #fff;
-            font-size: 16px;
+            font-size: 14px;
             outline: none;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         input:focus {
             border-color: var(--primary);
-            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px var(--primary-dim);
         }
 
-        .main-btn {
+        /* Simple Icons using emojis or Unicode (matches image vibe) */
+        .field-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0.7;
+        }
+
+        /* Special label for 'Forgot Password?' */
+        .label-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .forgot-pass {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* The Main Action Button */
+        .submit-btn {
             width: 100%;
             padding: 16px;
             border: none;
-            border-radius: 15px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            border-radius: 10px;
+            background-color: var(--primary);
+            color: #1a1a1a;
             font-size: 16px;
             font-weight: 600;
-            letter-spacing: 1px;
             cursor: pointer;
-            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.5);
-            transition: 0.3s;
+            margin-top: 10px;
+            transition: transform 0.2s ease, background 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
         }
 
-        .main-btn:active {
-            transform: scale(0.96);
+        .submit-btn:active {
+            transform: scale(0.97);
+            background-color: #e5b340;
         }
 
-        .toggle-text {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 13px;
-            color: var(--text-dim);
-        }
-
-        .toggle-text span {
-            color: var(--secondary);
-            font-weight: 600;
-            cursor: pointer;
-            padding-left: 5px;
-        }
-
-        /* Animations */
+        /* Helper Classes */
         .hidden {
-            display: none;
+            display: none !important;
         }
 
-        .fade-in {
-            animation: fadeIn 0.5s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="glass-card fade-in" id="loginView">
-            <h1>Nexus AI</h1>
-            <p class="desc">Enter your credentials to begin</p>
-            
-            <div class="input-box">
-                <input type="text" placeholder="Username" id="loginUser">
-            </div>
-            <div class="input-box">
-                <input type="password" placeholder="Password" id="loginPass">
-            </div>
-            
-            <button class="main-btn" onclick="handleLogin()">AUTHENTICATE</button>
-            
-            <p class="toggle-text">New user? <span onclick="showSignup()">Create Account</span></p>
+    <div class="app-view">
+        <h1 id="pageTitle">Welcome back</h1>
+        <p class="subtitle" id="pageSubtitle">Your student toolkit for the AI generation</p>
+
+        <div class="tab-switcher">
+            <div class="tab-btn active" id="tabSign" onclick="toggleForm('sign')">Sign In</div>
+            <div class="tab-btn" id="tabCreate" onclick="toggleForm('create')">Sign Up</div>
         </div>
 
-        <div class="glass-card fade-in hidden" id="signupView">
-            <h1>Create Identity</h1>
-            <p class="desc">Register for the AI Tool Catalog</p>
-            
-            <div class="input-box">
-                <input type="text" placeholder="Full Name">
+        <div id="signForm">
+            <div class="field-group">
+                <span class="field-label">Email</span>
+                <div class="input-wrapper">
+                    <span class="field-icon">✉️</span>
+                    <input type="email" placeholder="you@example.com">
+                </div>
             </div>
-            <div class="input-box">
-                <input type="text" placeholder="College Name">
+
+            <div class="field-group">
+                <div class="label-wrapper">
+                    <span class="field-label">Password</span>
+                    <a href="#" class="forgot-pass">Forgot password?</a>
+                </div>
+                <div class="input-wrapper">
+                    <span class="field-icon">🔒</span>
+                    <input type="password" placeholder="••••••••">
+                    <span class="field-icon" style="left: auto; right: 18px; font-size: 14px;">👁️</span>
+                </div>
             </div>
-            <div class="input-box">
-                <input type="tel" placeholder="Phone Number">
-            </div>
-            <div class="input-box">
-                <input type="password" placeholder="Set Password">
-            </div>
-            
-            <button class="main-btn" onclick="handleSignup()">INITIALIZE</button>
-            
-            <p class="toggle-text">Joined already? <span onclick="showLogin()">Log In</span></p>
+
+            <button class="submit-btn">
+                Sign In <span>→</span>
+            </button>
         </div>
+
+        <div id="createForm" class="hidden">
+            <div class="field-group">
+                <span class="field-label">Full Name</span>
+                <div class="input-wrapper">
+                    <span class="field-icon">👤</span>
+                    <input type="text" placeholder="Your full name">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="field-group">
+                    <span class="field-label">Email</span>
+                    <div class="input-wrapper">
+                        <span class="field-icon" style="font-size: 14px;">✉️</span>
+                        <input type="email" placeholder="you@example.com" style="padding-left: 42px;">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Mobile</span>
+                    <div class="input-wrapper">
+                        <span class="field-icon" style="font-size: 14px;">📱</span>
+                        <input type="tel" placeholder="10-digit" style="padding-left: 42px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Institution</span>
+                <div class="input-wrapper">
+                    <span class="field-icon">🏫</span>
+                    <input type="text" placeholder="College / Organization">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="field-group">
+                    <span class="field-label">Qualification</span>
+                    <div class="input-wrapper">
+                        <span class="field-icon" style="font-size: 14px;">🎓</span>
+                        <input type="text" placeholder="e.g. B.Tech CSE" style="padding-left: 42px;">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <span class="field-label">Address</span>
+                    <div class="input-wrapper">
+                        <span class="field-icon" style="font-size: 14px;">📍</span>
+                        <input type="text" placeholder="City, State" style="padding-left: 42px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Password</span>
+                <div class="input-wrapper">
+                    <span class="field-icon">🔒</span>
+                    <input type="password" placeholder="Min 6 characters">
+                    <span class="field-icon" style="left: auto; right: 18px; font-size: 14px;">👁️</span>
+                </div>
+            </div>
+
+            <button class="submit-btn" style="margin-top: 20px;">
+                Create Account <span>→</span>
+            </button>
+        </div>
+
     </div>
 
     <script>
-        const loginView = document.getElementById('loginView');
-        const signupView = document.getElementById('signupView');
+        // Form toggle logic
+        function toggleForm(view) {
+            // Define elements
+            const signForm = document.getElementById('signForm');
+            const createForm = document.getElementById('createForm');
+            const tabSign = document.getElementById('tabSign');
+            const tabCreate = document.getElementById('tabCreate');
+            const pageTitle = document.getElementById('pageTitle');
+            const pageSubtitle = document.getElementById('pageSubtitle');
 
-        function showSignup() {
-            loginView.classList.add('hidden');
-            signupView.classList.remove('hidden');
-        }
+            // Reset
+            signForm.classList.add('hidden');
+            createForm.classList.add('hidden');
+            tabSign.classList.remove('active');
+            tabCreate.classList.remove('active');
 
-        function showLogin() {
-            signupView.classList.add('hidden');
-            loginView.classList.remove('hidden');
-        }
-
-        function handleLogin() {
-            const user = document.getElementById('loginUser').value;
-            if(user) {
-                alert('Access Granted. Redirecting to AI Tools...');
-                // You would navigate to your tools catalog here
-                // window.location.href = "tools.html";
+            // Switch
+            if(view === 'sign') {
+                signForm.classList.remove('hidden');
+                tabSign.classList.add('active');
+                pageTitle.innerText = "Welcome back";
+                pageSubtitle.innerText = "Your student toolkit for the AI generation";
             } else {
-                alert('Please enter your credentials');
+                createForm.classList.remove('hidden');
+                tabCreate.classList.add('active');
+                pageTitle.innerText = "Create account";
+                pageSubtitle.innerText = "Join thousands of students exploring AI";
             }
-        }
-
-        function handleSignup() {
-            alert('Identity Created! You can now log in.');
-            showLogin();
         }
     </script>
 </body>
