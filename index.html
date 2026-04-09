@@ -3,609 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI Toolkit – Student Edition</title>
+  <title>AI Toolkit – Student Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f1117;
-      --card: #181c26;
-      --input: #1e2333;
-      --border: #2a3050;
-      --accent: #f5c518;
-      --accent-dark: #d4a800;
-      --text: #f0f2f8;
-      --muted: #7a859e;
-      --danger: #ff4d4d;
-      --radius: 14px;
-      --radius-sm: 10px;
+      --bg: #0f1117; --card: #181c26; --input: #1e2333; --border: #2a3050;
+      --accent: #f5c518; --text: #f0f2f8; --muted: #7a859e; --radius: 14px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; }
+    .app-wrapper { width: 100%; max-width: 430px; padding: 30px 20px; }
+    
+    .screen { display: none; animation: fadeUp 0.4s ease; }
+    .screen.active { display: flex; flex-direction: column; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-    }
-
-    /* Background decorative orbs */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -80px; right: -80px;
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(245,197,24,0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -60px; left: -60px;
-      width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(80,120,255,0.10) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .app-wrapper {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 430px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 32px 20px 40px;
-    }
-
-    /* ── Screen ── */
-    .screen {
-      display: none;
-      flex-direction: column;
-      gap: 0;
-      animation: fadeUp 0.38s cubic-bezier(.4,0,.2,1);
-    }
-    .screen.active { display: flex; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Header ── */
-    .screen-header { margin-bottom: 28px; }
-    .screen-header h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(42px, 10vw, 52px);
-      letter-spacing: 1px;
-      color: var(--text);
-      line-height: 1.05;
-    }
-    .screen-header p {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* ── Tab toggle ── */
-    .tab-bar {
-      display: flex;
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 5px;
-      margin-bottom: 28px;
-      border: 1px solid var(--border);
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 13px 0;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.22s, color 0.22s, box-shadow 0.22s;
-      background: transparent;
-      color: var(--muted);
-    }
-    .tab-btn.active {
-      background: var(--accent);
-      color: #111;
-      box-shadow: 0 4px 18px rgba(245,197,24,0.28);
-    }
-
-    /* ── Form ── */
+    /* UI Components */
+    .screen-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; margin-bottom: 8px; }
+    .screen-header p { color: var(--muted); font-size: 14px; margin-bottom: 25px; }
+    
     .form-group { margin-bottom: 16px; }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 7px;
-    }
-    .input-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .input-icon {
-      position: absolute;
-      left: 14px;
-      font-size: 16px;
-      pointer-events: none;
-      color: var(--muted);
-      line-height: 1;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="password"] {
-      width: 100%;
-      background: var(--input);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      padding: 14px 14px 14px 42px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      -webkit-appearance: none;
-    }
-    input::placeholder { color: var(--muted); }
-    input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(245,197,24,0.12);
-    }
-
-    /* password toggle */
-    .pw-toggle {
-      position: absolute;
-      right: 14px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      color: var(--muted);
-      padding: 0;
-      line-height: 1;
-      transition: color 0.2s;
-    }
-    .pw-toggle:hover { color: var(--text); }
-
-    /* forgot password */
-    .forgot-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 7px;
-    }
-    .forgot-link {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent);
-      text-decoration: none;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .forgot-link:hover { opacity: 0.8; }
-
-    /* ── CTA Button ── */
-    .cta-btn {
-      width: 100%;
-      padding: 17px;
-      margin-top: 8px;
-      background: var(--accent);
-      color: #111;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 0.3px;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 4px 22px rgba(245,197,24,0.3);
-    }
-    .cta-btn:hover {
-      background: var(--accent-dark);
-      box-shadow: 0 6px 28px rgba(245,197,24,0.4);
-    }
-    .cta-btn:active { transform: scale(0.98); }
-
-    /* ── Divider ── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 22px 0;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* ── Social buttons ── */
-    .social-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .social-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 13px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .social-btn:hover {
-      border-color: var(--accent);
-      background: rgba(245,197,24,0.06);
-    }
-    .social-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-    /* ── Error message ── */
-    .error-msg {
-      display: none;
-      color: var(--danger);
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 5px;
-      padding-left: 4px;
-    }
-    .error-msg.visible { display: block; }
-
-    /* ── Success overlay ── */
-    .success-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 100;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      text-align: center;
-      padding: 40px;
-      animation: fadeUp 0.4s ease;
-    }
-    .success-overlay.show { display: flex; }
-    .success-icon {
-      width: 80px; height: 80px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      animation: pop 0.4s 0.1s both cubic-bezier(.4,0,.2,1);
-    }
-    @keyframes pop {
-      from { transform: scale(0.5); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-    .success-overlay h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px;
-      letter-spacing: 1px;
-    }
-    .success-overlay p {
-      color: var(--muted);
-      font-size: 15px;
-      max-width: 280px;
-      line-height: 1.5;
-    }
-    .success-overlay .cta-btn { max-width: 260px; margin-top: 12px; }
-
-    /* ── Branding strip ── */
-    .brand-strip {
-      margin-top: 32px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.5px;
-    }
-    .brand-strip span {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    /* ── Responsive small screens ── */
-    @media (max-width: 360px) {
-      .form-row { grid-template-columns: 1fr; }
-      .social-row { grid-template-columns: 1fr; }
-    }
+    label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+    input { width: 100%; background: var(--input); border: 1.5px solid var(--border); border-radius: 10px; color: #fff; padding: 12px; outline: none; }
+    
+    .cta-btn { width: 100%; padding: 16px; background: var(--accent); border: none; border-radius: var(--radius); font-weight: 800; cursor: pointer; margin-top: 10px; }
+    
+    /* Dashboard Specific */
+    .dash-card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius); margin-bottom: 15px; }
+    .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .tool-item { background: var(--input); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid transparent; transition: 0.2s; cursor: pointer; }
+    .tool-item:hover { border-color: var(--accent); }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ SUCCESS OVERLAY ═══════════════════════════════ -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-icon">🎉</div>
-  <h2>You're In!</h2>
-  <p>Your account has been created. Welcome to the AI student toolkit.</p>
-  <button class="cta-btn" onclick="goToSignIn()">Sign In Now →</button>
+<div class="app-wrapper">
+  
+  <div class="screen active" id="signUpScreen">
+    <div class="screen-header">
+      <h1>Create Account</h1>
+      <p>Join the AI Toolkit Student Registry</p>
+    </div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="su-name" placeholder="John Doe"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="su-email" placeholder="john@university.edu"></div>
+    <div class="form-group"><label>Institution</label><input type="text" id="su-inst" placeholder="Harvard / IIT"></div>
+    <button class="cta-btn" onclick="registerUser()">Access Dashboard →</button>
+  </div>
+
+  <div class="screen" id="dashScreen">
+    <div class="screen-header">
+      <p>Welcome back,</p>
+      <h1 id="userHello">Student</h1>
+    </div>
+
+    <div class="dash-card">
+      <h3 style="font-size:14px; margin-bottom:10px;">Cloud Sync Status</h3>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:15px;">Your details are stored locally. Sync to secure them in the Google Sheet database.</p>
+      <button onclick="syncToCloud()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); padding:10px; border-radius:8px; width:100%; cursor:pointer; font-weight:700;">
+        ☁️ Sync to Google Sheets
+      </button>
+    </div>
+
+    <div class="tool-grid">
+      <div class="tool-item"><span>🤖</span><div style="font-size:12px; margin-top:5px;">AI Chat</div></div>
+      <div class="tool-item"><span>📝</span><div style="font-size:12px; margin-top:5px;">Resume Lab</div></div>
+      <div class="tool-item"><span>📊</span><div style="font-size:12px; margin-top:5px;">Study Plan</div></div>
+      <div class="tool-item"><span>🔒</span><div style="font-size:12px; margin-top:5px;">Vault</div></div>
+    </div>
+  </div>
+
 </div>
 
-<!-- ═══════════════════════════════ MAIN APP ═══════════════════════════════ -->
-<div class="app-wrapper">
-
-  <!-- ─────────── SIGN IN SCREEN ─────────── -->
-  <div class="screen active" id="signInScreen">
-    <div class="screen-header">
-      <h1>Welcome<br>back</h1>
-      <p>Your student toolkit for the AI generation</p>
-    </div>
-
-    <!-- Tab bar -->
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('signIn')">Sign In</button>
-      <button class="tab-btn" onclick="switchTab('signUp')">Sign Up</button>
-    </div>
-
-    <!-- Email -->
-    <div class="form-group">
-      <label for="si-email">Email</label>
-      <div class="input-wrap">
-        <span class="input-icon">✉️</span>
-        <input type="email" id="si-email" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <span class="error-msg" id="si-email-err">Please enter a valid email.</span>
-    </div>
-
-    <!-- Password -->
-    <div class="form-group">
-      <div class="forgot-row">
-        <label for="si-password" style="margin-bottom:0;">Password</label>
-        <a class="forgot-link" onclick="forgotPassword()">Forgot password?</a>
-      </div>
-      <div class="input-wrap">
-        <span class="input-icon">🔒</span>
-        <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password">
-        <button class="pw-toggle" onclick="togglePw('si-password', this)" tabindex="-1">👁️</button>
-      </div>
-      <span class="error-msg" id="si-pw-err">Password must be at least 6 characters.</span>
-    </div>
-
-    <button class="cta-btn" onclick="handleSignIn()">Sign In →</button>
-
-    <div class="divider">or continue with</div>
-
-    <div class="social-row">
-      <button class="social-btn" onclick="socialAuth('Google')">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Google
-      </button>
-      <button class="social-btn" onclick="socialAuth('GitHub')">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.165 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
-        </svg>
-        GitHub
-      </button>
-    </div>
-
-    <div class="brand-strip">Powered by <span>AI Toolkit</span> · Secured & Private</div>
-  </div>
-
-  <!-- ─────────── SIGN UP SCREEN ─────────── -->
-  <div class="screen" id="signUpScreen">
-    <div class="screen-header">
-      <h1>Create<br>account</h1>
-      <p>Join thousands of students exploring AI</p>
-    </div>
-
-    <!-- Tab bar -->
-    <div class="tab-bar">
-      <button class="tab-btn" onclick="switchTab('signIn')">Sign In</button>
-      <button class="tab-btn active" onclick="switchTab('signUp')">Sign Up</button>
-    </div>
-
-    <!-- Full Name -->
-    <div class="form-group">
-      <label for="su-name">Full Name</label>
-      <div class="input-wrap">
-        <span class="input-icon">👤</span>
-        <input type="text" id="su-name" placeholder="Your full name" autocomplete="name">
-      </div>
-      <span class="error-msg" id="su-name-err">Name is required.</span>
-    </div>
-
-    <!-- Email + Mobile -->
-    <div class="form-row">
-      <div class="form-group" style="margin-bottom:0">
-        <label for="su-email">Email</label>
-        <div class="input-wrap">
-          <span class="input-icon">✉️</span>
-          <input type="email" id="su-email" placeholder="you@example.com" autocomplete="email">
-        </div>
-        <span class="error-msg" id="su-email-err">Valid email required.</span>
-      </div>
-      <div class="form-group" style="margin-bottom:0">
-        <label for="su-mobile">Mobile</label>
-        <div class="input-wrap">
-          <span class="input-icon">📱</span>
-          <input type="tel" id="su-mobile" placeholder="10-digit" maxlength="10" autocomplete="tel">
-        </div>
-        <span class="error-msg" id="su-mobile-err">10-digit number.</span>
-      </div>
-    </div>
-
-    <!-- Institution -->
-    <div class="form-group" style="margin-top:16px">
-      <label for="su-institution">Institution</label>
-      <div class="input-wrap">
-        <span class="input-icon">🏫</span>
-        <input type="text" id="su-institution" placeholder="College / Organization" autocomplete="organization">
-      </div>
-    </div>
-
-    <!-- Qualification + Address -->
-    <div class="form-row">
-      <div class="form-group" style="margin-bottom:0">
-        <label for="su-qual">Qualification</label>
-        <div class="input-wrap">
-          <span class="input-icon">🎓</span>
-          <input type="text" id="su-qual" placeholder="e.g. B.Tech CSE">
-        </div>
-      </div>
-      <div class="form-group" style="margin-bottom:0">
-        <label for="su-address">Address</label>
-        <div class="input-wrap">
-          <span class="input-icon">📍</span>
-          <input type="text" id="su-address" placeholder="City, State" autocomplete="address-level2">
-        </div>
-      </div>
-    </div>
-
-    <!-- Password -->
-    <div class="form-group" style="margin-top:16px">
-      <label for="su-password">Password</label>
-      <div class="input-wrap">
-        <span class="input-icon">🔒</span>
-        <input type="password" id="su-password" placeholder="Min 6 characters" autocomplete="new-password">
-        <button class="pw-toggle" onclick="togglePw('su-password', this)" tabindex="-1">👁️</button>
-      </div>
-      <span class="error-msg" id="su-pw-err">Password must be at least 6 characters.</span>
-    </div>
-
-    <button class="cta-btn" onclick="handleSignUp()">Create Account →</button>
-
-    <div class="brand-strip">Powered by <span>AI Toolkit</span> · Secured & Private</div>
-  </div>
-
-</div><!-- /app-wrapper -->
-
 <script>
-  /* ── Tab switching ── */
-  function switchTab(tab) {
-    const isSignIn = tab === 'signIn';
-    document.getElementById('signInScreen').classList.toggle('active', isSignIn);
-    document.getElementById('signUpScreen').classList.toggle('active', !isSignIn);
+  // CHANGE THIS to your deployed Google Apps Script URL
+  const GAS_URL = "https://script.google.com/macros/s/YOUR_DEPLOYED_ID_HERE/exec";
 
-    // Update all tab buttons
-    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-      if (isSignIn) btn.classList.toggle('active', i % 2 === 0);
-      else          btn.classList.toggle('active', i % 2 === 1);
-    });
+  function registerUser() {
+    const user = {
+      name: document.getElementById('su-name').value,
+      email: document.getElementById('su-email').value,
+      institution: document.getElementById('su-inst').value
+    };
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    document.getElementById('signUpScreen').classList.remove('active');
+    document.getElementById('dashScreen').classList.add('active');
+    document.getElementById('userHello').innerText = user.name.split(' ')[0];
   }
 
-  /* ── Password toggle ── */
-  function togglePw(inputId, btn) {
-    const input = document.getElementById(inputId);
-    const isText = input.type === 'text';
-    input.type = isText ? 'password' : 'text';
-    btn.textContent = isText ? '👁️' : '🙈';
-  }
+  function syncToCloud() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if(!user) return alert("Please sign in first");
 
-  /* ── Validation helpers ── */
-  function showErr(id, show) {
-    document.getElementById(id).classList.toggle('visible', show);
-  }
-  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  function validPhone(v) { return /^\d{10}$/.test(v); }
+    // Create the JSONP Request
+    const script = document.createElement('script');
+    const callbackName = 'gsheetCallback';
+    
+    const params = {
+      function: "syncStudentProfile",
+      args: JSON.stringify([user.email, {name: user.name, institution: user.institution}])
+    };
 
-  /* ── Sign In ── */
-  function handleSignIn() {
-    const email = document.getElementById('si-email').value.trim();
-    const pw    = document.getElementById('si-password').value;
-    let valid = true;
+    window[callbackName] = function(response) {
+      if(response.ok) alert("🎉 Success! " + response.msg);
+      else alert("❌ Error: " + response.msg);
+      document.body.removeChild(script);
+      delete window[callbackName];
+    };
 
-    if (!validEmail(email)) { showErr('si-email-err', true); valid = false; }
-    else showErr('si-email-err', false);
-
-    if (pw.length < 6) { showErr('si-pw-err', true); valid = false; }
-    else showErr('si-pw-err', false);
-
-    if (!valid) return;
-
-    // Simulate sign-in success
-    alert(`Welcome back! Signed in as ${email}`);
-  }
-
-  /* ── Sign Up ── */
-  function handleSignUp() {
-    const name   = document.getElementById('su-name').value.trim();
-    const email  = document.getElementById('su-email').value.trim();
-    const mobile = document.getElementById('su-mobile').value.trim();
-    const pw     = document.getElementById('su-password').value;
-    let valid = true;
-
-    if (!name) { showErr('su-name-err', true); valid = false; }
-    else showErr('su-name-err', false);
-
-    if (!validEmail(email)) { showErr('su-email-err', true); valid = false; }
-    else showErr('su-email-err', false);
-
-    if (!validPhone(mobile)) { showErr('su-mobile-err', true); valid = false; }
-    else showErr('su-mobile-err', false);
-
-    if (pw.length < 6) { showErr('su-pw-err', true); valid = false; }
-    else showErr('su-pw-err', false);
-
-    if (!valid) return;
-
-    document.getElementById('successOverlay').classList.add('show');
-  }
-
-  /* ── Success → go to sign in ── */
-  function goToSignIn() {
-    document.getElementById('successOverlay').classList.remove('show');
-    switchTab('signIn');
-  }
-
-  /* ── Forgot Password ── */
-  function forgotPassword() {
-    const email = document.getElementById('si-email').value.trim();
-    if (validEmail(email)) {
-      alert(`Password reset link sent to ${email}`);
-    } else {
-      alert('Please enter your email address first, then tap Forgot password.');
-      document.getElementById('si-email').focus();
-    }
-  }
-
-  /* ── Social Auth (stub) ── */
-  function socialAuth(provider) {
-    alert(`${provider} authentication would be configured with your OAuth credentials.`);
+    script.src = `${GAS_URL}?callback=${callbackName}&function=${params.function}&args=${encodeURIComponent(params.args)}`;
+    document.body.appendChild(script);
   }
 </script>
 </body>
